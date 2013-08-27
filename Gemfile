@@ -44,3 +44,5 @@ group :development do
   gem "quiet_assets"
   gem "webrick"
 end
+
+gem 'backbone-on-rails'
