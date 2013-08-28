@@ -1,31 +1,27 @@
 JournalApp.Views.PostsIndexView = Backbone.View.extend({
-	collection: JournalApp.Collections.Posts,
 
-	initialize: function() {
+	initialize: function(options) {
+		this.collection = options.collection;
 
-	this.listenTo(this.collection, "add", this.render);
-	this.listenTo(this.collection, "change:title", this.render);
-	this.listenTo(this.collection, "remove", this.render);
-	this.listenTo(this.collection, "reset", this.render);
+		this.listenTo(this.collection, "add", this.render);
+		this.listenTo(this.collection, "change:title", this.render);
+		this.listenTo(this.collection, "remove", this.render);
+		this.listenTo(this.collection, "reset", this.render);
 
 	},
 
 	events: {
-		"click  ul li input": "delete"
+		"click  ul li input": "delete",
+		"click ul li a": "showPost",
+		"click #formLink": "goForm"
 	},
 
 	render: function() {
-		var $ul = $('<ul></ul>');
+		var that = this;
 
-		this.collection.each( function (el) {
-
-			var $li = $('<li>' + el.escape('title') + " " + el.escape('body') + '</li>');
-			$li.append("<form><input type='submit' value='delete' id=" + el.id + "></form>");
-			$ul.append($li);
-		});
-
-		this.$el.html($ul);
-		return this;
+		var renderedContent = JST['posts/index']({ posts: that.collection });
+		that.$el.html(renderedContent);
+		return that;
 	},
 
 	delete: function() {
@@ -35,5 +31,24 @@ JournalApp.Views.PostsIndexView = Backbone.View.extend({
 		var child = this.collection.get($(event.target).attr('id'));
 		var that = this;
 		child.destroy();
+	},
+
+	showPost: function() {
+
+		event.preventDefault();
+
+		var id = $(event.target).attr('id');
+		JournalApp.postsRouter.showPost(id);
+	},
+
+	goForm: function() {
+
+		event.preventDefault();
+
+		var postObject = new JournalApp.Models.Post({title: "", body: ""});
+		postObject.url = '/posts';
+
+		JournalApp.postsRouter.postForm(postObject);
 	}
+
 })

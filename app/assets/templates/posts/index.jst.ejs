@@ -1,0 +1,14 @@
+<ul>
+<a href="#/posts/form" id="formLink">Make a new post</a>
+<br>
+<br>
+	<% posts.each( function (post) { %>
+		<li>
+			<a href="#/posts/<%= post.escape('id') %>" id="<%= post.escape('id') %>">
+				<%= post.escape("title") %>
+			</a>
+			<br>
+			<form><input type="submit" value="Delete" id="<%= post.id %>"></form>
+		</li>
+	<% }); %>
+</ul>

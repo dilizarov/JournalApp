@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   respond_to :json
-  respond_to :html, :only => [:index]
+  respond_to :html, :only => [:index, :show]
 
   def index
     @posts = Post.all
@@ -12,10 +12,10 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(params[:post])
+    @post = Post.new(:title => params[:title], :body => params[:body])
 
     if @post.save
-      render :json => @post
+      render :json => @post, :status => 200
     else
       render :json => @post.errors.full_messages, :status => 422
     end
@@ -28,6 +28,16 @@ class PostsController < ApplicationController
       render :json => @post
     else
       render :json => @post.errors.full_messages, :status => 422
+    end
+  end
+
+  def show
+    @post = Post.find_by_id(params[:id])
+
+    if @post
+      render :json  => @post
+    else
+      render :json  => @post.errors.full_messages
     end
   end
 
